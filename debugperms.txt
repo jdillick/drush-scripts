@@ -1,0 +1,21 @@
+core: Array
+(
+    [0] => access administration pages
+    [1] => view the administration theme
+    [2] => create url aliases
+    [3] => access toolbar
+    [4] => access contextual links
+)
+
+core: Array
+(
+    [0] => administer nodes
+    [1] => access content overview
+    [2] => view own unpublished content
+    [3] => view revisions
+    [4] => revert revisions
+    [5] => administer menu
+    [6] => edit meta tags
+    [7] => access content
+)
+
