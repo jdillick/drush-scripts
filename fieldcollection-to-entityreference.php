@@ -18,17 +18,6 @@ $replacement_content_types = get_fc_replacement_content_types($fc_entity_info['b
 $fc_entity_attached_field_instances = get_fc_entity_field_instances($fc_entity_info['bundles']);
 
 /**
- * Get field instances that are attached to a field collection entity bundle
- */
-function get_fc_entity_field_instances($fc_entity_bundles) {
-  $fc_instances = array();
-  foreach ( $fc_entity_bundles as $fc_bundle ) {
-    $fc_instances[$fc_bundle] = field_read_instances(array('bundle' => $fc_bundle));
-  }
-  return $fc_instances;
-}
-
-/**
  * get configuration array for new content types to replace
  * field collection entity bundles.
  */
@@ -51,6 +40,19 @@ function get_fc_replacement_content_types($fc_entity_bundles) {
   }
   return $content_types;
 }
+
+
+/**
+ * Get field instances that are attached to a field collection entity bundle
+ */
+function get_fc_entity_field_instances($fc_entity_bundles) {
+  $fc_instances = array();
+  foreach ( $fc_entity_bundles as $fc_bundle ) {
+    $fc_instances[$fc_bundle] = field_read_instances(array('bundle' => $fc_bundle));
+  }
+  return $fc_instances;
+}
+
 
 /**
  * Create nodes to replace stored field collection entities.
