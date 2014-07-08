@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * attach-product-images.php
+ * attach_product_images.php
  */
 
 attach_product_images();
