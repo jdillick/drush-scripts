@@ -63,6 +63,9 @@ function replace_media ($url, $file) {
 
 function display_media_progress($count, $file, $files) {
   static $size_so_far = 0;
+  static $spinner_counter = 0;
+  $spinner_counter++;
+  $spinner = array('|','/','-','\\','|','-');
   $size_so_far += $file->filesize;
   $totalsize = get_total_size($files);
   $percentage = floor($count / count($files) * 100);
@@ -70,6 +73,7 @@ function display_media_progress($count, $file, $files) {
   echo '[';
   for($i = 1; $i <= 10; $i++) {
     if($i <= ($percentage / 10)) echo "#";
+    else if ($i < ($percentage / 10 + 1)) echo $spinner[$spinner_counter % count($spinner)];
     else echo " ";
   }
 
