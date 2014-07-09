@@ -5,11 +5,16 @@ function restore_missing_media() {
   $files = get_managed_image_files();
   $totalsize = get_total_size($files);
   foreach ( $files as $file ) {
-    $url = file_create_url($file->uri);
+    $file_url = file_create_url($file->uri);
     $file_name = drupal_realpath($file->uri);
-    if ($file_url && $file_name) replace_media($file_url, $file_name);
+    if ($file_url && $file_name) {
+      replace_media($file_url, $file_name);
+      display_media_progress($count++, $file, $files);
+    } else {
+      echo "Missing file url (" . $file_url .
+        ") or file name (" . $file_name . ") for fid:" . $file->fid . "\n";
+    }
 
-    display_media_progress($count++, $file, $files);
   }
 }
 
