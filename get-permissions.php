@@ -1,8 +1,17 @@
 <?php
 $roles = array(
- 'anonymous user',
- 'authenticated user',
- 'administrator',
+  'anonymous user',
+  'authenticated user',
+  // 'administrator',
+  'back-end developer',
+  'front-end developer',
+  'content editor',
+  'content creator',
+  'hfc_user_management_admin',
+  'marketing operations',
+  'marketing creative',
+  'seo',
+  'social media',
 );
 
 $allperms = array();

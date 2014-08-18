@@ -1,0 +1,51 @@
+<?php
+module_load_include('inc', 'ctools', 'includes/export');
+
+$args = drush_get_arguments();
+if ( ! isset($args[2]) || ! isset($args[3]) ) {
+  drush_set_error('Usage: drush @<alias> scr panel-exports.php <panel-nids> <output-directory>');
+  exit();
+}
+
+if ( ! is_dir(realpath($args[3])) ) {
+  drush_set_error("Output directory $args[3] does not exist.");
+  exit();
+}
+
+$nids = array();
+if (strpos($args[2], ',')) {
+  $nids = explode(',', $args[2]);
+  foreach ( $nids as $index => $nid ) {
+    $nids[$index] = trim($nid);
+  }
+}
+else {
+  $nids[] = trim($args[2]);
+}
+$nids = array_filter($nids);
+
+// 2078 - holiday catalog
+$nodes = node_load_multiple($nids);
+
+foreach ( $nodes as $nid => $node ) {
+  $panel_file = '<?php' . "\n";
+  $panel_file .= '$node = ' . ctools_var_export($node) . ";\n";
+
+  $display = db_select('panels_display', 'd')
+    ->fields('d')
+    ->condition('d.did', $node->panels_node['did'], '=')
+    ->execute()
+    ->fetchAssoc();
+
+  $panel_file .= '$display = ' . ctools_var_export($display) . ";\n";
+
+  $panes = db_select('panels_pane', 'p')
+    ->fields('p')
+    ->condition('p.did', $node->panels_node['did'], '=')
+    ->execute()
+    ->fetchAllAssoc('pid', PDO::FETCH_ASSOC);
+
+  $panel_file .= '$panes = ' . ctools_var_export($panes) . ";\n";
+
+  file_put_contents(realpath($args[3]) . '/' . 'panel-' . $nid . '.inc', $panel_file);
+}
