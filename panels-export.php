@@ -8,7 +8,7 @@ if ( ! isset($args[2]) || ! isset($args[3]) ) {
 }
 
 if ( ! is_dir(realpath($args[3])) ) {
-  drush_set_error("Output directory $args[3] does not exist.");
+  drush_set_error(t("Output directory @op does not exist.", array('@op' => $args[3])));
   exit();
 }
 
