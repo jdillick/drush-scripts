@@ -3,7 +3,7 @@ module_load_include('inc', 'ctools', 'includes/export');
 
 $args = drush_get_arguments();
 if ( ! isset($args[2]) || ! isset($args[3]) ) {
-  drush_set_error('Usage: drush @<alias> scr panel-exports.php <panel-nids> <output-directory>');
+  drush_set_error('Usage: drush @<alias> scr panels-export.php <panel-nids> <output-directory>');
   exit();
 }
 
