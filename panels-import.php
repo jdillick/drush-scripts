@@ -14,10 +14,6 @@ if ( ! is_dir($args[2]) ) {
 foreach ( new GlobIterator(realpath($args[2]) . "/panel*.inc") as $panel_import ) {
   include_once $panel_import->getPathname();
 
-  // insert or update node
-  drupal_set_message(t('Saving panels node @nid', array('@nid'=>$node->nid)));
-  node_save($node);
-
   $existing_display = db_select('panels_display','d')
     ->fields('d', array('did'))
     ->condition('did', $display['did'], '=')
@@ -48,4 +44,8 @@ foreach ( new GlobIterator(realpath($args[2]) . "/panel*.inc") as $panel_import 
       db_update('panels_pane')->fields($pane)->condition('pid', $pid, '=')->execute();
     }
   }
+
+  // insert or update node
+  drupal_set_message(t('Saving panels node @nid', array('@nid'=>$node->nid)));
+  node_save($node);
 }
