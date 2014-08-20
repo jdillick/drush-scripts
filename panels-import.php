@@ -35,6 +35,7 @@ function import($path) {
   save_panels_nodes($nodes, $mappings);
   map_panes($node_panes, $mappings, $nodes);
   save_panels_pane($node_panes);
+  publish($nodes);
 }
 
 function make_nodes_portable(&$nodes, &$displays) {
@@ -51,6 +52,9 @@ function make_nodes_portable(&$nodes, &$displays) {
 
     $display = $displays[$nid];
     $display['did'] = 'new';
+    $display['layout_settings'] = unserialize($display['layout_settings']);
+    $display['panel_settings'] = unserialize($display['panel_settings']);
+    $display['cache'] = unserialize($display['cache']);
     $node->export_display = '$display = ' . ctools_var_export((object) $display) . ';';
   }
 }
@@ -95,4 +99,12 @@ function save_panels_pane($node_panes) {
       )));
     }
   }
+}
+
+function publish($nodes) {
+  foreach ( $nodes as $node ) {
+    $node->panels_node['nid'] = $node->nid;
+  }
+  node_save($node);
+  workbench_moderation_moderate($node, 'published');
 }
