@@ -50,7 +50,6 @@ function get_total_size($files) {
 function replace_media ($url, $file, $force = FALSE) {
   $url = str_replace($_ENV['ENVTYPE'] . '.', '', $url);
   if ( ! file_exists($file) || $force ) {
-    if ( $force ) echo "Force download of $file.";
     $base = dirname($file);
     if ( ! is_dir($base) ) {
       mkdir($base, 02777, TRUE);
