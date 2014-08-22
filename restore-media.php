@@ -1,6 +1,9 @@
 <?php
+$force = FALSE;
+$args = drush_get_arguments();
+if ( isset($args[2]) && $args[2] == '-f' ) $force = TRUE;
 
-function restore_missing_media() {
+function restore_missing_media($force = FALSE) {
   $count = 0;
   $files = get_managed_image_files();
   $totalsize = get_total_size($files);
@@ -8,7 +11,7 @@ function restore_missing_media() {
     $file_url = file_create_url($file->uri);
     $file_name = drupal_realpath($file->uri);
     if ($file_url && $file_name) {
-      replace_media($file_url, $file_name);
+      replace_media($file_url, $file_name, $force);
       display_media_progress($count++, $file, $files);
     } else {
       echo "Missing file url (" . $file_url .
@@ -44,9 +47,9 @@ function get_total_size($files) {
   return $size;
 }
 
-function replace_media ($url, $file) {
+function replace_media ($url, $file, $force = FALSE) {
   $url = str_replace($_ENV['ENVTYPE'] . '.', '', $url);
-  if ( ! file_exists($file) ) {
+  if ( ! file_exists($file) || $force ) {
     $base = dirname($file);
     if ( ! is_dir($base) ) {
       mkdir($base, 02777, TRUE);
@@ -84,4 +87,4 @@ function display_media_progress($count, $file, $files) {
   echo sprintf("] (%d%% %d of %d%s downloaded)\r", $percentage, $size_so_far / $unit, $totalsize / $unit, $unit_label);
 }
 
-restore_missing_media();
+restore_missing_media($force);
