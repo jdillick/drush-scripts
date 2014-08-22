@@ -1,7 +1,7 @@
 <?php
 $force = FALSE;
 $args = drush_get_arguments();
-if ( isset($args[2]) && $args[2] == '-f' ) $force = TRUE;
+if ( isset($args[2]) && $args[2] == 'force' ) $force = TRUE;
 
 function restore_missing_media($force = FALSE) {
   $count = 0;
@@ -50,6 +50,7 @@ function get_total_size($files) {
 function replace_media ($url, $file, $force = FALSE) {
   $url = str_replace($_ENV['ENVTYPE'] . '.', '', $url);
   if ( ! file_exists($file) || $force ) {
+    if ( $force ) echo "Force download of $file.";
     $base = dirname($file);
     if ( ! is_dir($base) ) {
       mkdir($base, 02777, TRUE);
