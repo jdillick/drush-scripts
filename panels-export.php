@@ -47,5 +47,9 @@ foreach ( $nodes as $nid => $node ) {
 
   $panel_file .= '$panes = ' . ctools_var_export($panes) . ";\n";
 
-  file_put_contents(realpath($args[3]) . '/' . 'panel-' . $nid . '.inc', $panel_file);
+  file_put_contents(realpath($args[3]) . '/' . 'panel-' . make_safe_filename(trim($node->title)) . '.inc', $panel_file);
+}
+
+function make_safe_filename($str, $del = '-') {
+  return preg_replace('/\b\s?[\s|&|*|\.|nbsp;|\-|\']\s?\b/', $del, strtolower($str));
 }
