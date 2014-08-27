@@ -46,30 +46,32 @@ function import($path) {
 function insert_menu_links(&$menu_links, &$mappings) {
   drupal_set_message(t('Importing Menu Links'), 'ok');
   foreach ( $menu_links as $mlid => &$menu_link ) {
+    $menu_link['options'] = unserialize($menu_link['options']);
+
+    // Handle parent link mapping
+    if ( $menu_link['plid'] ) {
+      $plid = $menu_link['plid'];
+      $menu_link['plid'] = $mappings[$menu_link['plid']];
+    }
+
     if ( isset($menu_link['alias']) ) {
       // fix link_path for imported tid or nid
       $target = drupal_lookup_path('source', $menu_link['alias']);
       $source = $menu_link['link_path'];
       $menu_link['link_path'] = $target;
 
-      // Handle parent link mapping
-      if ( $menu_link['plid'] ) {
-        $plid = $menu_link['plid'];
-        $menu_link['plid'] = $mappings[$menu_link['plid']];
-      }
 
       // Fix Identifier
       if ( strpos($target, 'taxonomy/term/') === 0 ) {
-        $options = unserialize($menu_link['options']);
-        str_replace($source, $target, $options['identifier']);
-        $menu_link['options'] = serialize($options);
+        str_replace($source, $target, $menu_link['options']['identifier']);
       }
       unset($menu_link['alias']);
     }
-    $menu_link['mlid'] = 0;
 
+    unset($menu_link['mlid']);
     $mappings[$mlid] = menu_link_save($menu_link);
   }
+
 }
 
 function save_tb_megamenus($source_menu_config, $block_config, $mappings) {

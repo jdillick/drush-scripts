@@ -26,8 +26,9 @@ else {
 $menus = array_filter($menus);
 
 $menu_links = db_select('menu_links', 'm')
-  ->fields('m', array('link_path','link_title','menu_name','weight','expanded','options','mlid','plid','router_path'))
+  ->fields('m', array('link_path','link_title','menu_name','weight','expanded','hidden','options','mlid','plid','router_path'))
   ->condition('m.menu_name', $menus, 'IN')
+  ->condition('m.link_title', 'Home', '<>')
   ->orderBy('depth','ASC')
   ->execute()
   ->fetchAllAssoc('mlid', PDO::FETCH_ASSOC);
