@@ -3,7 +3,7 @@
 $node = node_load(array(466));
 
 /**
- * hfc_get_age_values
+ * get_age_values
  *
  * Returns array with low and high age value and units.
  *
@@ -30,7 +30,7 @@ $node = node_load(array(466));
  * @param  string $entity_type (optional) defaults to node
  * @return array ages array
  */
-function hfc_get_age_values($entity, $entity_type = 'node') {
+function get_age_values($entity, $entity_type = 'node') {
   $wrapper = entity_metadata_wrapper($entity_type, $entity);
 
   $values = array();
@@ -56,5 +56,5 @@ function hfc_get_age_values($entity, $entity_type = 'node') {
   return $values;
 }
 
-$ages = hfc_get_age_values($node);
+$ages = get_age_values($node);
 print_r($ages);
