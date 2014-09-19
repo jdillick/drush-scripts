@@ -3,11 +3,13 @@ field_collections_to_content_types();
 
 function field_collections_to_content_types() {
   $collections = get_all_field_collections();
-  foreach ( $collections as $fc ) {
+
+  foreach ( $collections as $fc => $bundles ) {
     echo "\n==================== $fc to content type ====================\n";
     $content_type = save_field_collection_content_type($fc);
     print_r($content_type);
     copy_fc_field_instances_to_content_type($fc, $content_type->type);
+    create_er_fields($bundles, $content_type->type);
   }
 }
 
@@ -18,9 +20,7 @@ function get_all_field_collections() {
       foreach ( $bundle_instances as $field_name => $instance ) {
         $field = field_info_field($field_name);
         if ( $field['type'] == 'field_collection' ) {
-          if ( ! in_array($field_name, $field_collections) ) {
-            $field_collections[] = $field_name;
-          }
+          $field_collections[$field_name][] = $instance['bundle'];
         }
       }
     }
@@ -64,9 +64,103 @@ function copy_fc_field_instances_to_content_type($fc, $content_type) {
       continue;
     }
     echo "Creating new instance $instance_name in {$content_type}\n";
-    unset($instance['id'], $instance['field_id']);
+    unset($instance['id']);
     $instance['entity_type'] = 'node';
     $instance['bundle'] = $content_type;
     $new_instance = field_create_instance($instance);
   }
+}
+
+function create_er_fields($source_bundles, $target_bundle) {
+  $field_name = $target_bundle . '_er';
+
+  $field = create_er_base_field($field_name, $target_bundle);
+  echo "Creating/updating entity reference base field $field_name\n";
+
+  foreach ( $source_bundles as $bundle ) {
+    $instance = create_er_field_instance($field_name, $info['field_id'], $bundle);
+    echo "Creating/updating entity reference field instance $field_name in $bundle\n";
+  }
+}
+function create_er_base_field($field_name, $target_bundle) {
+  $er_field = array(
+    'field_name' => $field_name,
+    'type' => 'entityreference',
+    'translatable' => '0',
+    'entity_types' => array(
+    ),
+    'settings' => array(
+      'target_type' => 'node',
+      'handler' => 'base',
+      'handler_settings' => array(
+        'target_bundles' => array(
+          $target_bundle => $target_bundle,
+        ),
+        'sort' => array(
+          'type' => 'none',
+        ),
+        'behaviors' => array(
+          'views-select-list' => array(
+            'status' => 0,
+          ),
+        ),
+      ),
+    ),
+  );
+
+  $info = field_info_field($field_name);
+  if ( ! isset($info) ) {
+    return field_create_field($er_field);
+  }
+  return field_update_field($er_field);
+}
+
+function create_er_field_instance($field_name, $field_id, $bundle) {
+  $er_instance = array(
+    'field_name' => $field_name,
+    'field_id' => $field_id,
+    'entity_type' => 'node',
+    'bundle' => $bundle,
+    'label' => ucwords(str_replace('_', ' ', $field_name)),
+    'widget' => array(
+      'weight' => '42',
+      'type' => 'inline_entity_form',
+      'module' => 'inline_entity_form',
+      'active' => 1,
+      'settings' => array(
+        'fields' => array(
+        ),
+        'type_settings' => array(
+          'allow_existing' => 0,
+          'match_operator' => 'CONTAINS',
+          'delete_references' => 0,
+          'override_labels' => 0,
+          'label_singular' => 'node',
+          'label_plural' => 'nodes',
+        ),
+      ),
+    ),
+    'settings' => array(
+      'user_register_form' => false,
+    ),
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'type' => 'entityreference_label',
+        'settings' => array(
+          'link' => false,
+        ),
+        'module' => 'entityreference',
+        'weight' => 1,
+      ),
+    ),
+    'required' => 0,
+    'description' => '',
+  );
+
+  $instance = field_info_instance('node', $field_name, $bundle);
+  if ( ! isset($instance) ) {
+    return field_create_instance($er_instance);
+  }
+  return field_update_instance($er_instance);
 }
