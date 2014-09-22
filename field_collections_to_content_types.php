@@ -19,6 +19,8 @@ field_collections_to_content_types();
  *   source bundles.
  */
 function field_collections_to_content_types() {
+  include_once 'lib/field_collections.inc';
+
   $collections = get_all_field_collections();
 
   foreach ( $collections as $field_collection => $bundles ) {
@@ -31,45 +33,12 @@ function field_collections_to_content_types() {
 }
 
 /**
- * Get all field collections.
- *
- * @return array An array indexed by field collections, and array of bundles with
- *   those field collections.
- */
-function get_all_field_collections() {
-  $field_collections = array();
-
-  // loop through all the field instances, by entity and bundle, looking for
-  // field collections.
-  foreach ( field_info_instances() as $entity_type => $type_bundles ) {
-    foreach ( $type_bundles as $bundle => $bundle_instances ) {
-      foreach ( $bundle_instances as $field_name => $instance ) {
-        $field = field_info_field($field_name);
-        if ( $field['type'] == 'field_collection' ) {
-          $field_collections[$field_name][] = $instance['bundle'];
-        }
-      }
-    }
-  }
-
-  echo "Field collection bundles:\n";
-  print_r($field_collections);
-
-  return $field_collections;
-}
-
-/**
  * Give a field collection, creates or updates a new node content type as a replacement.
  *
  * @return stdClass Saved node content type.
  */
 function save_field_collection_content_type($field_collection) {
-  $content_type = strtr($field_collection, array(
-    'field_' => '',
-    'hub_' => '',
-  ));
-  $ct_name = ucwords(str_replace('_', ' ', $content_type));
-  $fc_name = ucwords(str_replace('_', ' ', $field_collection));
+  extract(field_collection_replacement($field_collection));
 
   // Create New Content Type
   echo "Creating/Updating content type $content_type to replace $field_collection.\n";
@@ -82,7 +51,7 @@ function save_field_collection_content_type($field_collection) {
     'locked' => TRUE,
     'custom' => TRUE,
     'disabled' => FALSE,
-    'has_title' => FALSE,
+    'has_title' => TRUE,
     'title_label' => 'Title',
     'module' => 'node',
   );
