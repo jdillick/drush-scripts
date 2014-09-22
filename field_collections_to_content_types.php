@@ -5,8 +5,8 @@
  *
  * @brief Eliminated field collections.
  * @details Transforms site field collections into replacement content types.
- *   Adds entity reference fields to source bundles of field collection item
- *   instances targeted at replacement content types.
+ *   Adds entity reference fields to the bundles of field collection item
+ *   instances, and targets the replacement content types.
  */
 
 field_collections_to_content_types();
@@ -38,6 +38,9 @@ function field_collections_to_content_types() {
  */
 function get_all_field_collections() {
   $field_collections = array();
+
+  // loop through all the field instances, by entity and bundle, looking for
+  // field collections.
   foreach ( field_info_instances() as $entity_type => $type_bundles ) {
     foreach ( $type_bundles as $bundle => $bundle_instances ) {
       foreach ( $bundle_instances as $field_name => $instance ) {
