@@ -1,18 +1,41 @@
 <?php
+/**
+ * @file
+ * field_collections_to_content_types.php
+ *
+ * @brief Eliminated field collections.
+ * @details Transforms site field collections into replacement content types.
+ *   Adds entity reference fields to source bundles of field collection item
+ *   instances targeted at replacement content types.
+ */
+
 field_collections_to_content_types();
 
+/**
+ * Iterate through field collections:
+ * - Create new replacement content types
+ * - Copy field instances to new content types
+ * - Create entity reference fields for each field collection instance in their
+ *   source bundles.
+ */
 function field_collections_to_content_types() {
   $collections = get_all_field_collections();
 
-  foreach ( $collections as $fc => $bundles ) {
-    echo "\n==================== $fc to content type ====================\n";
-    $content_type = save_field_collection_content_type($fc);
+  foreach ( $collections as $field_collection => $bundles ) {
+    echo "\n==================== $field_collection to content type ====================\n";
+    $content_type = save_field_collection_content_type($field_collection);
     print_r($content_type);
-    copy_fc_field_instances_to_content_type($fc, $content_type->type);
+    copy_fc_field_instances_to_content_type($field_collection, $content_type->type);
     create_er_fields($bundles, $content_type->type);
   }
 }
 
+/**
+ * Get all field collections.
+ *
+ * @return array An array indexed by field collections, and array of bundles with
+ *   those field collections.
+ */
 function get_all_field_collections() {
   $field_collections = array();
   foreach ( field_info_instances() as $entity_type => $type_bundles ) {
@@ -25,19 +48,28 @@ function get_all_field_collections() {
       }
     }
   }
+
+  echo "Field collection bundles:\n";
+  print_r($field_collections);
+
   return $field_collections;
 }
 
-function save_field_collection_content_type($fc) {
-  $content_type = strtr($fc, array(
+/**
+ * Give a field collection, creates or updates a new node content type as a replacement.
+ *
+ * @return stdClass Saved node content type.
+ */
+function save_field_collection_content_type($field_collection) {
+  $content_type = strtr($field_collection, array(
     'field_' => '',
     'hub_' => '',
   ));
   $ct_name = ucwords(str_replace('_', ' ', $content_type));
-  $fc_name = ucwords(str_replace('_', ' ', $fc));
+  $fc_name = ucwords(str_replace('_', ' ', $field_collection));
 
   // Create New Content Type
-  echo "Creating/Updating content type $content_type to replace $fc.\n";
+  echo "Creating/Updating content type $content_type to replace $field_collection.\n";
   $new_ct = (object) array(
     'type' => $content_type,
     'orig_type' => $content_type,
@@ -48,21 +80,29 @@ function save_field_collection_content_type($fc) {
     'custom' => TRUE,
     'disabled' => FALSE,
     'has_title' => FALSE,
+    'title_label' => 'Title',
     'module' => 'node',
   );
   node_type_save($new_ct);
   return node_type_load($content_type);
 }
 
-function copy_fc_field_instances_to_content_type($fc, $content_type) {
+/**
+ * Copies field collection fields to replacement content type.
+ */
+function copy_fc_field_instances_to_content_type($field_collection, $content_type) {
   // Get field instances of field collection, copy instance to new ct
-  $field_instances_info = field_info_instances('field_collection_item', $fc);
-  $ct_instances_info = field_info_instances('node', $content_type);
+  $field_instances_info = field_info_instances('field_collection_item', $field_collection);
+  $content_type_instances_info = field_info_instances('node', $content_type);
+
+  // Loop through field instances in field collection, copy to new content type
   foreach ( $field_instances_info as $instance_name => &$instance ) {
-    if ( in_array($instance_name, array_keys($ct_instances_info)) ) {
-      echo "Instance $instance_name exists in {$content_type}\n";
-      continue;
-    }
+    // skip instance that already exist
+    if ( in_array($instance_name, array_keys($content_type_instances_info)) ) continue;
+
+    // skip field collection instances (don't want field collections in new content type)
+    if ( ($field = field_info_field($instance_name)) && 'field_collection' == $field['type'] ) continue;
+
     echo "Creating new instance $instance_name in {$content_type}\n";
     unset($instance['id']);
     $instance['entity_type'] = 'node';
@@ -71,18 +111,36 @@ function copy_fc_field_instances_to_content_type($fc, $content_type) {
   }
 }
 
-function create_er_fields($source_bundles, $target_bundle) {
-  $field_name = $target_bundle . '_er';
+/**
+ * Create entity reference field in each bundle that currently contains a field colleciton.
+ */
+function create_er_fields($source_bundles, $entity_ref_target_bundle) {
+  $field_name = $entity_ref_target_bundle . '_er';
 
-  $field = create_er_base_field($field_name, $target_bundle);
+  $field = create_er_base_field($field_name, $entity_ref_target_bundle);
   echo "Creating/updating entity reference base field $field_name\n";
 
   foreach ( $source_bundles as $bundle ) {
+    // if the field collection bundle is another field collection (nested fc)
+    if ( ($info = field_info_field($bundle)) && $info['type'] == 'field_collection' ) {
+
+      // create the er in the new ct, not the old fc
+      $bundle = strtr($bundle, array(
+        'field_' => '',
+        'hub_' => '',
+      ));
+    }
+
     $instance = create_er_field_instance($field_name, $info['field_id'], $bundle);
     echo "Creating/updating entity reference field instance $field_name in $bundle\n";
   }
 }
-function create_er_base_field($field_name, $target_bundle) {
+
+/**
+ * Create new entity reference field base (named similarly to existing field collection).
+ * Sets the target bundle of the entity reference to the field collection replacement content type.
+ */
+function create_er_base_field($field_name, $entity_ref_target_bundle) {
   $er_field = array(
     'field_name' => $field_name,
     'type' => 'entityreference',
@@ -94,7 +152,7 @@ function create_er_base_field($field_name, $target_bundle) {
       'handler' => 'base',
       'handler_settings' => array(
         'target_bundles' => array(
-          $target_bundle => $target_bundle,
+          $entity_ref_target_bundle => $entity_ref_target_bundle,
         ),
         'sort' => array(
           'type' => 'none',
@@ -115,6 +173,10 @@ function create_er_base_field($field_name, $target_bundle) {
   return field_update_field($er_field);
 }
 
+/**
+ * Create an infinity cardinality entity reference field instance in the source
+ * bundle.
+ */
 function create_er_field_instance($field_name, $field_id, $bundle) {
   $er_instance = array(
     'field_name' => $field_name,
