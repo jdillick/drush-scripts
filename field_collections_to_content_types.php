@@ -116,6 +116,7 @@ function create_er_base_field($field_name, $entity_ref_target_bundle) {
   $er_field = array(
     'field_name' => $field_name,
     'type' => 'entityreference',
+    'cardinality' => -1,
     'translatable' => '0',
     'entity_types' => array(
     ),
@@ -146,7 +147,7 @@ function create_er_base_field($field_name, $entity_ref_target_bundle) {
 }
 
 /**
- * Create an infinity cardinality entity reference field instance in the source
+ * Create an entity reference field instance in the source
  * bundle.
  */
 function create_er_field_instance($field_name, $field_id, $bundle) {

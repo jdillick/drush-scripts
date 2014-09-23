@@ -14,7 +14,8 @@ field_collection_entities_to_nodes();
 
 function field_collection_entities_to_nodes() {
   $all_field_collections = get_all_field_collections();
-  foreach ( node_load_multiple(nodes_with_field_collections($all_field_collections)) as $nid => $node ) {
+  $nodes = node_load_multiple(nodes_with_field_collections($all_field_collections));
+  foreach ( $nodes as $nid => $node ) {
     $field_collections = bundle_field_collections($all_field_collections, $node->type);
     $replacements = field_collection_replacements($field_collections);
     $node_wrapper = entity_metadata_wrapper('node', $node);
@@ -28,12 +29,8 @@ function field_collection_entities_to_nodes() {
           if ( isset($converted_field_collection_items[$field_collection_item->item_id]) ) continue;
 
           $nid = convert_field_collection_item_to_node($field_collection_item, $replacement['content_type']);
-          $nids[] = $nid;
+          $node_wrapper->{$replacement['er_field']}[] = $nid;
         }
-      }
-
-      foreach ( $nids as $i => $nid ) {
-        $node_wrapper->{$replacement['er_field']}->set($nid);
       }
     }
 
@@ -59,7 +56,7 @@ function convert_field_collection_item_to_node($item, $replacement_type) {
       if ( ($field = field_info_field($field_name)) && 'field_collection' == $field['type'] ) {
         $replacement = field_collection_replacement($field_name);
         foreach ( $item_wrapper->{$field_name} as $field_collection_item ) {
-          $node_wrapper->{$replacement['er_field']}->set(convert_field_collection_item_to_node($field_collection_item, $replacement['content_type']));
+          $node_wrapper->{$replacement['er_field']}[] = convert_field_collection_item_to_node($field_collection_item, $replacement['content_type']);
         }
       }
       else {
