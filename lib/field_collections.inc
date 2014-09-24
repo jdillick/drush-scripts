@@ -48,6 +48,22 @@ function nodes_with_field_collections($field_collections = array()) {
   return array_unique($nids);
 }
 
+function get_nested_field_collection_instances() {
+  $field_collections = get_all_field_collections();
+  $nested_collections = array();
+
+  foreach ( $field_collections as $field_name => $bundles ) {
+    foreach ( $bundles as $bundle ) {
+      if ( ($field = field_info_field($bundle)) && 'field_collection' == $field['type'] ) {
+
+        $nested_collections[] = field_info_instance('field_collection_item', $field_name, $bundle);
+      }
+    }
+  }
+
+  return $nested_collections;
+}
+
 function bundle_field_collections($field_collections = array(), $bundle ) {
   $collections = array();
   foreach ( $field_collections as $field_collection => $bundles ) {
