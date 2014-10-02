@@ -47,6 +47,7 @@ function convert_field_collection_item_to_node($item, $replacement_type) {
 
   $item_wrapper = entity_metadata_wrapper('field_collection_item', $item);
   $item_instances = field_info_instances('field_collection_item', $item->field_name);
+  $images = array();
 
   foreach ( $item_instances as $field_name => $instance ) {
     // only process fields with data
@@ -60,11 +61,29 @@ function convert_field_collection_item_to_node($item, $replacement_type) {
         }
       }
       else {
+        // Add image fields to list for file usage
+        if ( 'image' == $field['type'] ) $images[] = $node_wrapper->{$field_name};
         $node_wrapper->{$field_name}->set($item_wrapper->{$field_name}->value());
       }
     }
   }
 
   $node_wrapper->save();
+  update_image_usage($images, $node_wrapper->nid->value());
+
   return $node_wrapper->nid->value();
+}
+
+/**
+ * Add file usage entry for each image in replacement node
+ */
+function update_image_usage($images, $nid) {
+  foreach ( $images as $field ) {
+    if ( 'EntityListWrapper' != get_class($field) ) $field = array($field);
+    foreach ( $field as $image ) {
+      if ( ( $file = (object) $image->value() ) && $file->fid) {
+        file_usage_add($file, 'file', 'node', $nid);
+      }
+    }
+  }
 }
