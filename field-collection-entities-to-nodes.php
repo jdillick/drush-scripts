@@ -8,13 +8,29 @@
  * populate new entity reference fields with targets to new nodes.
  */
 
-require 'lib/field_collections.inc';
+require 'lib/field-collections.inc';
 
-field_collection_entities_to_nodes();
+$args = drush_get_arguments();
+$bundles = array();
+if ( isset($args[2]) ) {
+  $bundles = explode(',', $args[2]);
+  $bundles = array_filter($bundles, 'node_type_load');
+  if ( ! $bundles ) {
+    drush_set_error('Usage: drush scr field_collection_entities_to_nodes.php [fc_bundle[,fc_bundle2...]]');
+    exit();
+  }
+  echo "Converting field collections entities found in:\n";
+  foreach ( $bundles as $bundle ) {
+    echo "* $bundle\n";
+  }
+  echo "\n";
+}
 
-function field_collection_entities_to_nodes() {
+field_collection_entities_to_nodes($bundles);
+
+function field_collection_entities_to_nodes($include_bundles = array()) {
   $all_field_collections = get_all_field_collections();
-  $nodes = node_load_multiple(nodes_with_field_collections($all_field_collections));
+  $nodes = node_load_multiple(nodes_with_field_collections($all_field_collections, $include_bundles));
   foreach ( $nodes as $nid => $node ) {
     $field_collections = bundle_field_collections($all_field_collections, $node->type);
     $replacements = field_collection_replacements($field_collections);

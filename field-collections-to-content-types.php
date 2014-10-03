@@ -9,7 +9,23 @@
  *   instances, and targets the replacement content types.
  */
 
-field_collections_to_content_types();
+$args = drush_get_arguments();
+$bundles = array();
+if ( isset($args[2]) ) {
+  $bundles = explode(',', $args[2]);
+  $bundles = array_filter($bundles, 'node_type_load');
+  if ( ! $bundles ) {
+    drush_set_error('Usage: drush scr field_collections_to_content_types.php [fc_bundle[,fc_bundle2...]]');
+    exit();
+  }
+  echo "Converting field collections found in:\n";
+  foreach ( $bundles as $bundle ) {
+    echo "* $bundle\n";
+  }
+  echo "\n";
+}
+
+field_collections_to_content_types($bundles);
 
 /**
  * Iterate through field collections:
@@ -17,13 +33,20 @@ field_collections_to_content_types();
  * - Copy field instances to new content types
  * - Create entity reference fields for each field collection instance in their
  *   source bundles.
+ *
+ * @param array $include_bundles limit field collection conversion to these bundles. If
+ *  not set, conversion will take place for all field collections. If field collection
+ *  instance appears in multiple bundles, any included bundle will convert all bundles.
  */
-function field_collections_to_content_types() {
-  include_once 'lib/field_collections.inc';
+function field_collections_to_content_types( $include_bundles = array() ) {
+  include_once 'lib/field-collections.inc';
 
   $collections = get_all_field_collections();
 
   foreach ( $collections as $field_collection => $bundles ) {
+    // skip field collections that aren't included
+    if ( $include_bundles && ! array_intersect($include_bundles, $bundles) ) continue;
+
     echo "\n==================== $field_collection to content type ====================\n";
     $content_type = save_field_collection_content_type($field_collection);
     print_r($content_type);
