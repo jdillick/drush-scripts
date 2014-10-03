@@ -25,9 +25,12 @@ function get_all_field_collections() {
   return $field_collections;
 }
 
-function nodes_with_field_collections($field_collections = array()) {
+function nodes_with_field_collections($field_collections = array(), $include_bundles = array()) {
   $nids = array();
   foreach ( $field_collections as $field_collection => $bundles ) {
+    // skip field collections that aren't included
+    if ( $include_bundles && ! array_intersect($include_bundles, $bundles) ) continue;
+
     foreach ( $bundles as $bundle ) {
       // if bundle is a field_collection, skip
       if ( ($field = field_info_field($bundle)) && 'field_collection' == $field['type'] ) continue;
@@ -92,4 +95,25 @@ function field_collection_replacements($field_collections = array()) {
     $replacements[$field_collection] = field_collection_replacement($field_collection);
   }
   return $replacements;
+}
+
+function get_field_collection_items_from_node($node) {
+    $field_collection_item_ids = array();
+    $node_wrapper = entity_metadata_wrapper('node', $node);
+
+    $bundle_field_collections = bundle_field_collections(get_all_field_collections(), $node->type);
+    foreach ( $bundle_field_collections as $bundle_field_collection ) {
+      $field_collection_items = $node_wrapper->$bundle_field_collection;
+      if ( ! is_a($field_collection_items, 'EntityListWrapper') ) {
+        $field_collection_items = array($field_collection_items);
+      }
+
+      foreach ( $field_collection_items as $field_collection_item ) {
+        if ( ($item = $field_collection_item->value()) && $item->item_id ) {
+          $field_collection_item_ids[] = $item->item_id;
+        }
+      }
+    }
+
+    return $field_collection_item_ids;
 }

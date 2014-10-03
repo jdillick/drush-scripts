@@ -1,6 +1,6 @@
 <?php
 
-require dirname(__FILE__) . '/lib/field_collections.inc';
+require dirname(__FILE__) . '/lib/field-collections.inc';
 
 $field_collections = get_all_field_collections();
 foreach ( $field_collections as $field_name => $bundles ) {
