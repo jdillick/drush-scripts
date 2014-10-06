@@ -1,4 +1,7 @@
 <?php
+
+require 'lib/progress.inc';
+
 $force = FALSE;
 $args = drush_get_arguments();
 if ( isset($args[2]) && $args[2] == 'force' ) $force = TRUE;
@@ -62,29 +65,6 @@ function replace_media ($url, $file, $force = FALSE) {
       echo "Unable to get $url\n";
     }
   }
-}
-
-function display_media_progress($count, $file, $files) {
-  static $size_so_far = 0;
-  static $spinner_counter = 0;
-  $spinner_counter++;
-  $spinner = array('|','/','-','\\','|','-');
-  $size_so_far += $file->filesize;
-  $totalsize = get_total_size($files);
-  $percentage = floor($count / count($files) * 100);
-
-  echo '[';
-  for($i = 1; $i <= 10; $i++) {
-    if($i <= ($percentage / 10)) echo "#";
-    else if ($i < ($percentage / 10 + 1)) echo $spinner[$spinner_counter % count($spinner)];
-    else echo " ";
-  }
-
-  $kb = 1024;
-  $mb = $kb * 1024;
-  $unit = $totalsize > $mb ? $mb : $kb;
-  $unit_label = $totalsize > $mb ? 'M' : 'K';
-  echo sprintf("] (%d%% %d of %d%s downloaded)\r", $percentage, $size_so_far / $unit, $totalsize / $unit, $unit_label);
 }
 
 restore_missing_media($force);

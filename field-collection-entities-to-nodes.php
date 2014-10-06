@@ -9,6 +9,7 @@
  */
 
 require 'lib/field-collections.inc';
+require 'lib/progress.inc';
 
 $args = drush_get_arguments();
 $bundles = array();
@@ -26,12 +27,18 @@ if ( isset($args[2]) ) {
   echo "\n";
 }
 
-field_collection_entities_to_nodes($bundles);
+try {
+  field_collection_entities_to_nodes($bundles);
+} catch ( Exception $e ) {
+  print_r($e);
+}
 
 function field_collection_entities_to_nodes($include_bundles = array()) {
   $all_field_collections = get_all_field_collections();
   $nodes = node_load_multiple(nodes_with_field_collections($all_field_collections, $include_bundles));
   foreach ( $nodes as $nid => $node ) {
+    display_text_progress_bar(count($nodes));
+
     $field_collections = bundle_field_collections($all_field_collections, $node->type);
     $replacements = field_collection_replacements($field_collections);
     $node_wrapper = entity_metadata_wrapper('node', $node);
@@ -67,7 +74,7 @@ function convert_field_collection_item_to_node($item, $replacement_type) {
 
   foreach ( $item_instances as $field_name => $instance ) {
     // only process fields with data
-    if ( $item_wrapper->{$field_name}->value() ) {
+    if ( ($value = $item_wrapper->{$field_name}->value()) ) {
 
       // recurse if field collection field
       if ( ($field = field_info_field($field_name)) && 'field_collection' == $field['type'] ) {
@@ -79,7 +86,8 @@ function convert_field_collection_item_to_node($item, $replacement_type) {
       else {
         // Add image fields to list for file usage
         if ( 'image' == $field['type'] ) $images[] = $node_wrapper->{$field_name};
-        $node_wrapper->{$field_name}->set($item_wrapper->{$field_name}->value());
+
+        $node_wrapper->{$field_name}->set($value);
       }
     }
   }
