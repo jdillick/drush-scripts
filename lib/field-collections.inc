@@ -29,7 +29,7 @@ function nodes_with_field_collections($field_collections = array(), $include_bun
   $nids = array();
   foreach ( $field_collections as $field_collection => $bundles ) {
     // skip field collections that aren't included
-    if ( $include_bundles && ! array_intersect($include_bundles, $bundles) ) continue;
+    if ( $include_bundles && ! ($bundles = array_intersect($include_bundles, $bundles)) ) continue;
 
     foreach ( $bundles as $bundle ) {
       // if bundle is a field_collection, skip

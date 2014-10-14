@@ -58,3 +58,12 @@ function copy_identity_field_instances($from_bundle, $to_bundle, $profile = arra
 
   update_doppel_profile($to_bundle, $from_bundle, $profile);
 }
+
+function delete_doppel_profile($doppel_name) {
+  $doppel = hfc_doppel_get_doppel($doppel_name);
+  if ( $doppel ) {
+    delete_field($doppel->doppel_identity_field, $doppel_name);
+  }
+
+  hfc_doppel_delete_doppel($doppel_name);
+}

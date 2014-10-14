@@ -1,4 +1,7 @@
 <?php
+
+include_once 'lib/progress.inc';
+
 $args = drush_get_arguments();
 $ct = $args[2];
 
@@ -8,5 +11,7 @@ $instances = field_read_instances(array('bundle' => $ct), array('include_inactiv
 foreach ( $instances as $instance ) {
   field_delete_instance($instance);
   field_purge_instance($instance);
+
+  display_text_progress_bar(count($instances));
 }
 node_type_delete($ct);

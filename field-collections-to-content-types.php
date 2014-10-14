@@ -45,7 +45,7 @@ function field_collections_to_content_types( $include_bundles = array() ) {
 
   foreach ( $collections as $field_collection => $bundles ) {
     // skip field collections that aren't included
-    if ( $include_bundles && ! array_intersect($include_bundles, $bundles) ) continue;
+    if ( $include_bundles && ! ($bundles = array_intersect($include_bundles, $bundles)) ) continue;
 
     echo "\n==================== $field_collection to content type ====================\n";
     $content_type = save_field_collection_content_type($field_collection);

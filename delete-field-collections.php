@@ -30,7 +30,7 @@ function delete_field_collections($include_bundles = array()) {
   $field_collections = get_all_field_collections();
   foreach ( $field_collections as $field_collection => $bundles ) {
     // skip bundles that aren't included
-    if ( $include_bundles && ! array_intersect($include_bundles, $bundles) ) continue;
+    if ( $include_bundles && ! ($bundles = array_intersect($include_bundles, $bundles)) ) continue;
 
     delete_field_collection_entities($field_collection, $bundles);
     delete_field_collection_instances($field_collection, $bundles);
