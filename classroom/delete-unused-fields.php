@@ -73,6 +73,11 @@ $cleanup = array(
     'field_sites_allowed',
     'field_toolbox_type_of_content',
   ),
+  'field_hub_contributor' => array(
+    'field_hub_contributor_company_na',
+    'field_hub_contributor_bio',
+    'field_hub_contributor_company_lo',
+  ),
 );
 
 foreach ( $cleanup as $content_type => $fields ) {
