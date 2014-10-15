@@ -12,8 +12,10 @@ function display_media_progress($count, $file, $files) {
   echo $progress_bar . " " . $download_counter . "\r";
 }
 
-function display_text_progress_bar($total) {
+function display_text_progress_bar($total, $reset = FALSE) {
   static $count = 0;
+  if ( $reset ) $count = 0;
+
   $count++;
   echo text_progress_bar($count, $total) . "\r";
 }
@@ -32,7 +34,7 @@ function text_progress_bar( $item_count = 0, $total = 1, $heartbeat = FALSE ) {
     else if ($i < ($percentage / 10 + 1)) $bar .= $spinner[$heartbeat % count($spinner)];
     else $bar .= " ";
   }
-  $bar .= ' ' . $percentage . '%]';
+  $bar .= sprintf(' %3s%%]', $percentage);
 
   return $bar;
 }

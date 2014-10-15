@@ -1,5 +1,6 @@
 <?php
 
+include_once dirname(__FILE__) . '/../lib/progress.inc';
 include_once dirname(__FILE__) . '/../lib/field.inc';
 
 $cleanup = array(
@@ -7,7 +8,38 @@ $cleanup = array(
     'field_hub_google_custom_categori',
   ),
   'textual_content' => array(
-    'field_hub_images',
+    'field_hub_abstract',
+    'field_hub_banner_credits',
+    'field_hub_banner_title',
+    'field_hub_call_to_action',
+    'field_hub_contributor',
+    'field_hub_display_title',
+    'field_hub_keep_retire',
+    'field_hub_large_banner_url',
+    'field_hub_legacy_content_type',
+    'field_hub_legacy_url',
+    'field_hub_medium_banner_url',
+    'field_hub_nid',
+    'field_hub_published_in_magazine',
+    'field_hub_published_on_site',
+    'field_hub_rating',
+    'field_hub_season',
+    'field_hub_small_banner_url',
+    'field_hub_tags',
+    'field_hub_tc_active',
+    'field_hub_tc_age_high',
+    'field_hub_tc_age_low',
+    'field_hub_tc_brand_alignment',
+    'field_hub_tc_brand_pillar',
+    'field_hub_tc_citation',
+    'field_hub_tc_expiration_date',
+    'field_hub_tc_grade_high',
+    'field_hub_tc_grade_low',
+    'field_hub_tc_published_date',
+    'field_hub_tc_related_content',
+    'field_hub_tc_target_audience',
+    'field_hub_tc_type_of_content',
+    'field_sites_allowed',
   ),
   'classroom_product' => array(
     'field_class_google_custom_catego',
@@ -44,7 +76,9 @@ $cleanup = array(
 );
 
 foreach ( $cleanup as $content_type => $fields ) {
+  display_text_progress_bar(count($fields), TRUE);
   foreach ( $fields as $field_name ) {
     delete_field($field_name, $content_type);
+    display_text_progress_bar(count($fields));
   }
 }
