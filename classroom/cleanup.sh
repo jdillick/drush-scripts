@@ -24,15 +24,18 @@ drush @classroom scr copy-identity-field-instances-to-doppels.php classroom_prod
 # Save all Doppel Types (causes doppel flattening)
 drush @classroom scr save-all-nodes-in-types.php classroom_product,parent_teacher_guide,publication_club,publication_magazine,toolbox_media_content
 
+# Fix missing file usage
+drush @classroom scr add-file-usage.php classroom_product,parent_teacher_guide,publication_club,publication_magazine,toolbox_media_content
+
+# Detach Doppel Profiles
+drush @classroom scr detach-doppels.php classroom_product,parent_teacher_guide,publication_club,publication_magazine,toolbox_media_content
+
 # Remove Identity Content Types
 drush @classroom scr delete-content-type.php product
 drush @classroom scr delete-content-type.php textual_content
 drush @classroom scr delete-content-type.php club
 drush @classroom scr delete-content-type.php hub_magazine
 drush @classroom scr delete-content-type.php media_asset
-
-# Detach Doppel Profiles
-drush @classroom scr detach-doppels.php classroom_product,parent_teacher_guide,publication_club,publication_magazine,toolbox_media_content
 
 # Create FC Replacement for Parent Teacher Guide
 drush @classroom scr field-collections-to-content-types.php parent_teacher_guide
