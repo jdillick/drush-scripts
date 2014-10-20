@@ -21,3 +21,15 @@ function delete_field($field_name, $bundle, $entity_type = 'node') {
   field_delete_instance($instance, TRUE);
   field_purge_instance($instance);
 }
+
+function file_fields ($bundle_name, $entity_type = 'node') {
+  $file_fields = array();
+  $instances = field_info_instances($entity_type, $bundle_name);
+  foreach ( $instances as $field_name => $instance ) {
+    if ( in_array(get_field_type($field_name), array('file', 'image')) ) {
+      $file_fields[] = $field_name;
+    }
+  }
+
+  return $file_fields;
+}
