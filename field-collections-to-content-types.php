@@ -142,6 +142,23 @@ function create_er_base_field($field_name, $entity_ref_target_bundle) {
     'cardinality' => -1,
     'translatable' => '0',
     'entity_types' => array(
+      'node',
+    ),
+    'field_permissions' => array(
+      'type' => 0,
+    ),
+    'foreign keys' => array(
+      'node' => array(
+        'table' => 'node',
+        'columns' => array(
+          'target_id' => 'nid',
+        ),
+      ),
+    ),
+    'indexes' => array(
+      'target_id' => array(
+        0 => 'target_id',
+      ),
     ),
     'settings' => array(
       'target_type' => 'node',
