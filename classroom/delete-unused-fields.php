@@ -14,6 +14,7 @@ $cleanup = array(
     'field_hub_call_to_action',
     'field_hub_contributor',
     'field_hub_display_title',
+    'field_hub_images',
     'field_hub_keep_retire',
     'field_hub_large_banner_url',
     'field_hub_legacy_content_type',
@@ -67,16 +68,16 @@ $cleanup = array(
     'field_hub_me_grade_low',
     'field_hub_nid',
     'field_hub_related_content',
-    'field_hub_streaming_service_id',
     'field_hub_stream_service',
+    'field_hub_streaming_service_id',
     'field_hub_target_audience',
     'field_sites_allowed',
     'field_toolbox_type_of_content',
   ),
   'field_hub_contributor' => array(
-    'field_hub_contributor_company_na',
     'field_hub_contributor_bio',
     'field_hub_contributor_company_lo',
+    'field_hub_contributor_company_na',
   ),
 );
 

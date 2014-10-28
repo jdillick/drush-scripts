@@ -220,13 +220,24 @@ function create_er_field_instance($field_name, $field_id, $bundle) {
     ),
     'display' => array(
       'default' => array(
-        'label' => 'above',
-        'type' => 'entityreference_label',
+        'label' => 'hidden',
+        'type' => 'entityreference_entity_view',
         'settings' => array(
+          'view_mode' => 'default',
           'link' => false,
         ),
         'module' => 'entityreference',
-        'weight' => 1,
+        'weight' => 3,
+      ),
+      'full' => array(
+        'label' => 'hidden',
+        'type' => 'entityreference_entity_view',
+        'settings' => array(
+          'view_mode' => 'full',
+          'link' => false,
+        ),
+        'module' => 'entityreference',
+        'weight' => 3,
       ),
     ),
     'required' => 0,

@@ -39,7 +39,7 @@ drush @classroom scr delete-content-type.php media_asset
 
 # Create FC Replacement for Parent Teacher Guide
 drush @classroom scr field-collections-to-content-types.php parent_teacher_guide
-drush @classroom cc all
+drush @classroom cc all; memflush --server=127.0.0.1; drush cc drush
 
 # Copy FC Entities to Nodes for Parent Teacher Guide
 drush @classroom scr field-collection-entities-to-nodes.php parent_teacher_guide
