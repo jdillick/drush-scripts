@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Set config directory for configuration module
-drush @classroom vset configuration_config_path '../config'
-
 # Disabled/Enable Modules
 drush @classroom en -y hfc_environment_modules
 drush @classroom cc all; memflush --server=127.0.0.1; drush cc drush
@@ -51,6 +48,3 @@ drush @classroom scr field-collection-entities-to-nodes.php parent_teacher_guide
 drush @classroom scr delete-field-collections.php parent_teacher_guide
 
 drush @classroom cc all; memflush --server=127.0.0.1; drush cc drush
-
-# Import configurations for configuration module
-drush @classroom config-sync
