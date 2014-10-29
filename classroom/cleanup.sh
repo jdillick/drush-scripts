@@ -51,4 +51,32 @@ drush @classroom scr field-collection-entities-to-nodes.php parent_teacher_guide
 drush @classroom scr delete-field-collections.php parent_teacher_guide
 
 # Setup configuration module
-drush @classroom config-start-tracking content_type.classroom_product content_type.content_tiers content_type.editable_area content_type.main_page content_type.panel content_type.parent_teacher_guide content_type.premium content_type.promotion content_type.promotion_area content_type.publication_club content_type.publication_magazine content_type.toolbox_media_content content_type.webform
+drush @classroom config-start-tracking content_type.classroom_product \
+  content_type.content_tiers \
+  content_type.editable_area \
+  content_type.main_page \
+  content_type.panel \
+  content_type.parent_teacher_guide \
+  content_type.premium \
+  content_type.promotion \
+  content_type.promotion_area \
+  content_type.publication_club \
+  content_type.publication_magazine \
+  content_type.toolbox_media_content \
+  content_type.webform
+
+drush @classroom config-start-tracking 'field_group.group_publication_club_fields|no'
+drush @classroom config-start-tracking 'field_group.group_publication_magazine_field'
+drush @classroom config-start-tracking 'field_group.group_parent_teacher_guide_field'
+drush @classroom config-start-tracking 'field_group.group_toolbox_media_content_fiel'
+drush @classroom config-start-tracking 'field_group.group_sunrise_sunset|node|toolbox_media_content|form'
+drush @classroom config-start-tracking 'field_group.group_classroom_product_fields|n'
+drush @classroom config-start-tracking 'field_group.group_section|node|classroom_product|form'
+drush @classroom config-start-tracking 'field_group.group_price_changes|node|classroom_product|form'
+drush @classroom config-start-tracking 'field_group.group_banner_images|node|promotion|form'
+drush @classroom config-start-tracking 'field_group.group_kids_banner_images|node|promotion|form'
+drush @classroom config-start-tracking 'field_group.group_sunrise_sunset|node|promotion|form'
+drush @classroom config-start-tracking 'field_group.group_content_admin|node|panel|form'
+drush @classroom config-start-tracking 'field_group.group_content_admin|node|webform|form'
+drush @classroom config-start-tracking 'field_group.group_hero_area|node|panel|form'
+drush @classroom config-start-tracking 'field_group.group_hero_area|node|webform|form'
