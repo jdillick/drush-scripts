@@ -46,3 +46,6 @@ drush @classroom scr field-collection-entities-to-nodes.php parent_teacher_guide
 
 # Delete FC Entities and field instances for Parent Teacher Guide
 drush @classroom scr delete-field-collections.php parent_teacher_guide
+
+# Set configuration module parent_teacher_guide
+drush @classroom vset configuration_config_path '../config'
