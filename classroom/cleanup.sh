@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Set config directory for configuration module
+drush @classroom vset configuration_config_path '../config'
+
 # Disabled/Enable Modules
 drush @classroom en -y hfc_environment_modules
 drush @classroom cc all; memflush --server=127.0.0.1; drush cc drush
@@ -47,5 +50,5 @@ drush @classroom scr field-collection-entities-to-nodes.php parent_teacher_guide
 # Delete FC Entities and field instances for Parent Teacher Guide
 drush @classroom scr delete-field-collections.php parent_teacher_guide
 
-# Set configuration module parent_teacher_guide
-drush @classroom vset configuration_config_path '../config'
+# Setup configuration module
+drush @classroom config-start-tracking content_type.classroom_product content_type.content_tiers content_type.editable_area content_type.main_page content_type.panel content_type.parent_teacher_guide content_type.premium content_type.promotion content_type.promotion_area content_type.publication_club content_type.publication_magazine content_type.toolbox_media_content content_type.webform
