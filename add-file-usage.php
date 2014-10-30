@@ -29,22 +29,29 @@ function fix_file_usage( $file_field, $content_type ) {
     ->fieldCondition($file_field, 'fid', 'NULL', '<>')
     ->execute();
 
-  if ( ! $result['node'] ) return;
+  if ( ! $result['node'] ) {
+    echo "No nodes in $content_type with files\n";
+    return;
+  }
 
+  $count = count($result['node']);
+  display_text_progress_bar($count, TRUE);
   foreach ( node_load_multiple(array_keys($result['node'])) as $node ) {
-    // print_r($node->$file_field);
+    display_text_progress_bar($count);
     $items = field_get_items('node', $node, $file_field);
+    if ( ! $items ) {
+      echo "No file field items of type $file_field in node $node->nid!\n";
+    }
     foreach ( $items as $item ) {
-      $value = field_view_value('node', $node, $file_field, $item);
-      $file = (object) $value['#item'];
-      if ( isset($file->fid) && ! check_file_usage($file, $node) ) {
+      $file = (object) $item;
+      if ( isset($file->fid) && ! has_file_usage($file, $node) ) {
         file_usage_add($file , 'file', 'node', $node->nid);
       }
     }
   }
 }
 
-function check_file_usage($file, $node) {
+function has_file_usage($file, $node) {
   $file_usage = file_usage_list($file);
   $used = FALSE;
   foreach ( $file_usage as $module => $types ) {

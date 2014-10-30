@@ -27,6 +27,8 @@ drush @classroom scr add-file-usage.php parent_teacher_guide,toolbox_media_conte
 # Detach Doppel Profiles
 drush @classroom scr detach-doppels.php parent_teacher_guide,toolbox_media_content
 
+drush @classroom cc all; memflush --server=127.0.0.1; drush cc drush
+
 # Remove Identity Content Types
 drush @classroom scr delete-content-type.php textual_content
 drush @classroom scr delete-content-type.php media_asset
