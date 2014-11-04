@@ -11,8 +11,10 @@ function restore_missing_media($force = FALSE) {
   $files = get_managed_files();
   $totalsize = get_total_size($files);
   foreach ( $files as $file ) {
+
     $file_url = file_create_url($file->uri);
-    $file_name = drupal_realpath($file->uri);
+    $file_name = get_drupal_realpath($file);
+
     if ($file_url && $file_name) {
       replace_media($file_url, $file_name, $force);
       display_media_progress($count++, $file, $files);
@@ -22,6 +24,21 @@ function restore_missing_media($force = FALSE) {
     }
 
   }
+}
+
+function get_drupal_realpath($file) {
+  $realpath = drupal_realpath($file->uri);
+  if ( $realpath ) return $realpath;
+
+  $parsed_url = parse_url($file->uri);
+  $path = file_stream_wrapper_get_instance_by_uri($parsed_url['scheme'] . "://")
+    ->realpath() . '/' .
+    ( $parsed_url['host'] ? $parsed_url['host'] : '') .
+    $parsed_url['path'];
+
+  if ( $path ) return $path;
+
+  return FALSE;
 }
 
 function get_managed_files() {
