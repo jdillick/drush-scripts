@@ -8,7 +8,7 @@ if ( isset($args[2]) && $args[2] == 'force' ) $force = TRUE;
 
 function restore_missing_media($force = FALSE) {
   $count = 0;
-  $files = get_managed_image_files();
+  $files = get_managed_files();
   $totalsize = get_total_size($files);
   foreach ( $files as $file ) {
     $file_url = file_create_url($file->uri);
@@ -24,7 +24,7 @@ function restore_missing_media($force = FALSE) {
   }
 }
 
-function get_managed_image_files() {
+function get_managed_files() {
   $db_or = db_or()
     ->condition('fc.type', 'image', '=')
     ->condition('fc.type', 'file', '=');
