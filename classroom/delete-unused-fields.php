@@ -79,6 +79,9 @@ $cleanup = array(
     'field_hub_contributor_company_lo',
     'field_hub_contributor_company_na',
   ),
+  'field_hub_content_tiers' => array(
+    'field_hub_tc_url_call_to_action',
+  ),
 );
 
 foreach ( $cleanup as $content_type => $fields ) {

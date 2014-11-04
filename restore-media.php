@@ -25,8 +25,13 @@ function restore_missing_media($force = FALSE) {
 }
 
 function get_managed_image_files() {
-  $fields = db_select('field_config', 'fc')
+  $db_or = db_or()
     ->condition('fc.type', 'image', '=')
+    ->condition('fc.type', 'file', '=');
+
+  $fields = db_select('field_config', 'fc')
+    ->condition($db_or)
+    ->condition('fc.deleted', 1, '<>')
     ->fields('fc', array('field_name'))
     ->execute()
     ->fetchAll(PDO::FETCH_COLUMN);
