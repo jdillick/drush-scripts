@@ -21,6 +21,24 @@ function get_doppel_configuration( $doppel_types = array() ) {
 }
 
 /**
+ * Get the doppel configuration of content types that have one of these
+ * identities.
+ *
+ * @param array $identity_types list of content types
+ * @return array of configurations for each identity type.
+ */
+function get_doppelled_configurations( $identity_types = array() ) {
+  $doppels = array();
+  foreach ( hfc_doppel_get_doppels() as $doppel_type => $config ) {
+    if ( in_array($config->doppel_identity, $identity_types) ) {
+      $doppels[$config->doppel_identity][$doppel_type] = $config;
+    }
+  }
+
+  return $doppels;
+}
+
+/**
  * Update a doppel profile.
  *
  * @param string $doppel_name the name of the doppel content type

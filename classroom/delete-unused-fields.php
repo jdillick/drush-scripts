@@ -1,6 +1,7 @@
 <?php
 
 include_once dirname(__FILE__) . '/../lib/progress.inc';
+include_once dirname(__FILE__) . '/../lib/doppel.inc';
 include_once dirname(__FILE__) . '/../lib/field.inc';
 
 $cleanup = array(
@@ -82,12 +83,59 @@ $cleanup = array(
   'field_hub_content_tiers' => array(
     'field_hub_tc_url_call_to_action',
   ),
+  'club' => array(
+    'field_hub_club_active',
+    'field_hub_club_assoc_products',
+    'field_hub_club_authoritative_url',
+    'field_hub_club_base_price',
+    'field_hub_club_brand_align',
+    'field_hub_club_brand_pillar',
+    'field_hub_club_expiration_date',
+    'field_hub_club_features_list',
+    'field_hub_club_grade_high',
+    'field_hub_club_grade_low',
+    'field_hub_club_high_res_img_alt',
+    'field_hub_club_legal_terms',
+    'field_hub_club_magento_sku',
+    'field_hub_club_product_demo',
+    'field_hub_club_product_images',
+    'field_hub_club_publish_date',
+    'field_hub_club_subtitle',
+    'field_hub_club_tags',
+    'field_hub_club_type_of_content',
+    'field_hub_nid',
+    'field_sites_allowed',
+  ),
+  'publication_club' => array(
+    'field_spoke_club_features_list',
+    'field_spoke_club_high_res_img_al',
+    'field_spoke_club_legal_terms',
+    'field_spoke_club_product_demo',
+    'field_spoke_club_subtitle',
+  ),
 );
 
 foreach ( $cleanup as $content_type => $fields ) {
   display_text_progress_bar(count($fields), TRUE);
+  cleanup_doppels($content_type, $fields);
+
   foreach ( $fields as $field_name ) {
     delete_field($field_name, $content_type);
     display_text_progress_bar(count($fields));
+  }
+}
+
+function cleanup_doppels($content_type, $fields) {
+  $doppels = get_doppelled_configurations(array($content_type));
+  if ( isset($doppels[$content_type]) ) {
+    foreach ( $doppels[$content_type] as $doppel_name => $doppel ) {
+      $profile = $doppel->doppel_profile;
+      foreach ( $profile as $doppel_field => $config ) {
+        if ( in_array($config['identity_field'], $fields) ) {
+          unset($profile[$doppel_field]);
+        }
+      }
+      update_doppel_profile($doppel_name, $doppel->doppel_identity, $profile);
+    }
   }
 }
