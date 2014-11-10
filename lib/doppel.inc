@@ -1,6 +1,7 @@
 <?php
 
 require_once 'field.inc';
+require_once 'progress.inc';
 
 /**
  * Get doppel configurations for a list of doppel content types.
@@ -61,11 +62,21 @@ function update_doppel_profile($doppel_name, $doppel_identity, $doppel_profile) 
  * @param  $profile the doppel field mappings for existing field instances in source bundle.
  */
 function copy_identity_field_instances($from_bundle, $to_bundle, $profile = array()) {
+  echo "Copying identity field instances from $from_bundle to $to_bundle\n";
   $from_instances = array();
 
-  foreach ( field_info_instances('node', $from_bundle) as $field_name => $instance ) {
+  $fields = field_info_instances('node', $from_bundle);
+  display_text_progress_bar(count($fields), TRUE);
+
+  foreach ( $fields as $field_name => $instance ) {
+    display_text_progress_bar(count($fields));
+
     // skip existing instances
-    if ( in_array($field_name, array_keys($profile))) continue;
+    foreach ( $profile as $doppel_field_name => $config ) {
+      if ( $config['identity_field'] == $field_name ) {
+        continue 2;
+      }
+    }
 
     copy_field_instance($field_name, $from_bundle, $to_bundle);
 

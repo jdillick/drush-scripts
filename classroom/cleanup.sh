@@ -52,3 +52,4 @@ drush @classroom cc all; memflush --server=127.0.0.1; drush cc drush
 
 # Enable new content type feature module
 drush @classroom en -y classroom_content_types
+drush @classroom fr -y --force classroom_content_types

@@ -22,7 +22,6 @@ copy_identity_field_instances_to_doppels($doppels);
  */
 function copy_identity_field_instances_to_doppels( $doppel_types = array() ) {
   $config = get_doppel_configuration($doppel_types);
-  print_r($config);
   foreach ( $doppel_types as $type ) {
     copy_identity_field_instances($config[$type]->doppel_identity, $type, $config[$type]->doppel_profile);
   }
