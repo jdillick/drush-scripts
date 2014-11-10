@@ -113,6 +113,16 @@ $cleanup = array(
     'field_spoke_club_product_demo',
     'field_spoke_club_subtitle',
   ),
+  'hub_magazine' => array(
+    'field_hub_mg_features_list',
+    'field_hub_mg_hi_res_image_alt',
+    'field_hub_mg_product_demo_link',
+  ),
+  'publication_magazine' => array(
+    'field_spoke_mg_features_list',
+    'field_spoke_mg_hi_res_image_alt',
+    'field_spoke_mg_product_demo_link',
+  ),
 );
 
 foreach ( $cleanup as $content_type => $fields ) {
