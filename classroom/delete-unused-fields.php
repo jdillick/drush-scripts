@@ -116,6 +116,7 @@ $cleanup = array(
 );
 
 foreach ( $cleanup as $content_type => $fields ) {
+  echo "Cleaning up unwanted fields in $content_type\n";
   display_text_progress_bar(count($fields), TRUE);
   cleanup_doppels($content_type, $fields);
 
