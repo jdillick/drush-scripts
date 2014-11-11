@@ -117,8 +117,6 @@ $cleanup = array(
     'field_hub_mg_features_list',
     'field_hub_mg_hi_res_image_alt',
     'field_hub_mg_product_demo_link',
-  ),
-  'publication_magazine' => array(
     'field_hub_mg_1_year_sub_ca',
     'field_hub_mg_1_year_sub_intl',
     'field_hub_mg_1_year_subscription',
@@ -141,24 +139,41 @@ $cleanup = array(
     'field_hub_mg_type_of_content',
     'field_hub_nid',
     'field_sites_allowed',
+  ),
+  'publication_magazine' => array(
     'field_spoke_mg_features_list',
     'field_spoke_mg_hi_res_image_alt',
     'field_spoke_mg_product_demo_link',
   ),
 );
 
-foreach ( $cleanup as $content_type => $fields ) {
-  $entity_type = 'node';
-  // assuming it's a field collection if it isn't a node type
-  $entity_type = (node_type_load($content_type) ? 'node' : 'field_collection_item');
+$cleanup_field_groups = array(
+  'publication_club' => array(
+    'group_publication_club',
+  ),
+  'publication_magazine' => array(
+    'group_publication_magazine',
+  ),
+);
 
-  echo "Cleaning up unwanted fields in $content_type\n";
-  display_text_progress_bar(count($fields), TRUE);
-  cleanup_doppels($content_type, $fields);
+// Do the cleanup tasks
+cleanup_fields($cleanup);
+cleanup_field_groups($cleanup_field_groups);
 
-  foreach ( $fields as $field_name ) {
-    delete_field($field_name, $content_type, $entity_type);
-    display_text_progress_bar(count($fields));
+function cleanup_fields($cleanup) {
+  foreach ( $cleanup as $content_type => $fields ) {
+    $entity_type = 'node';
+    // assuming it's a field collection if it isn't a node type
+    $entity_type = (node_type_load($content_type) ? 'node' : 'field_collection_item');
+
+    echo "Cleaning up unwanted fields in $content_type\n";
+    display_text_progress_bar(count($fields), TRUE);
+    cleanup_doppels($content_type, $fields);
+
+    foreach ( $fields as $field_name ) {
+      delete_field($field_name, $content_type, $entity_type);
+      display_text_progress_bar(count($fields));
+    }
   }
 }
 
@@ -173,6 +188,15 @@ function cleanup_doppels($content_type, $fields) {
         }
       }
       update_doppel_profile($doppel_name, $doppel->doppel_identity, $profile);
+    }
+  }
+}
+
+function cleanup_field_groups($field_groups) {
+  foreach ( $field_groups as $content_type => $groups ) {
+    echo "Cleaning up unwanted field groups in $content_type\n";
+    foreach ( $groups as $group_name ) {
+      delete_field_group($group_name, $content_type);
     }
   }
 }

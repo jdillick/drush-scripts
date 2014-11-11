@@ -33,3 +33,10 @@ function file_fields ($bundle_name, $entity_type = 'node') {
 
   return $file_fields;
 }
+
+function delete_field_group($group_name, $bundle_name, $entity_type = 'node', $mode = 'form') {
+  if ( ($group = field_group_load_field_group($group_name, $entity_type, $bundle_name, $mode)) ) {
+    ctools_include('export');
+    field_group_group_export_delete($group, FALSE);
+  }
+}
