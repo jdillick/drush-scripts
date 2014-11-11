@@ -148,12 +148,16 @@ $cleanup = array(
 );
 
 foreach ( $cleanup as $content_type => $fields ) {
+  $entity_type = 'node';
+  // assuming it's a field collection if it isn't a node type
+  $entity_type = (node_type_load($content_type) ? 'node' : 'field_collection_item');
+
   echo "Cleaning up unwanted fields in $content_type\n";
   display_text_progress_bar(count($fields), TRUE);
   cleanup_doppels($content_type, $fields);
 
   foreach ( $fields as $field_name ) {
-    delete_field($field_name, $content_type);
+    delete_field($field_name, $content_type, $entity_type);
     display_text_progress_bar(count($fields));
   }
 }
