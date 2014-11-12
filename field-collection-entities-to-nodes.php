@@ -66,6 +66,8 @@ function convert_field_collection_item_to_node($item, $replacement_type) {
   $node = new stdClass;
   $node->type = $replacement_type;
   $node->title = "Item {$item->item_id}.";
+  $node->language = LANGUAGE_NONE;
+  $node->status = 1;
   $node_wrapper = entity_metadata_wrapper('node', $node);
 
   $item_wrapper = entity_metadata_wrapper('field_collection_item', $item);
