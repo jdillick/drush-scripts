@@ -83,6 +83,9 @@ $cleanup = array(
   'field_hub_content_tiers' => array(
     'field_hub_tc_url_call_to_action',
   ),
+  'field_tier' => array(
+    'field_call_to_action',
+  ),
   'club' => array(
     'field_hub_club_active',
     'field_hub_club_assoc_products',
@@ -145,14 +148,60 @@ $cleanup = array(
     'field_spoke_mg_hi_res_image_alt',
     'field_spoke_mg_product_demo_link',
   ),
+  'product' => array(
+    'field_hub_active',
+    'field_hub_authoritative_url',
+    'field_hub_google_availability',
+    'field_hub_google_brand',
+    'field_hub_google_category',
+    'field_hub_google_custom_categori',
+    'field_hub_grade_high',
+    'field_hub_high_res_image_alt',
+    'field_hub_nid',
+    'field_hub_pr_brand_alignment',
+    'field_hub_pr_tags',
+    'field_hub_product_id',
+    'field_hub_purchase_link_s_',
+    'field_hub_type_of_content',
+    'field_sites_allowed',
+  ),
+  'classroom_product' => array(
+    'field_class_active',
+    'field_class_authoritative_url',
+    'field_class_google_availability',
+    'field_class_google_brand',
+    'field_class_google_category',
+    'field_class_google_custom_catego',
+    'field_class_google_custom_categori',
+    'field_class_grade_high',
+    'field_class_nid',
+    'field_class_pr_brand_alignment',
+    'field_class_pr_tags',
+    'field_class_product_id',
+    'field_class_purchase_link_s_',
+    'field_class_type_of_content',
+    'field_sites_allowed',
+  ),
 );
 
 $cleanup_field_groups = array(
+  'textual_content' => array(
+    'group_archival_kids_data',
+    'group_content_admin',
+    'group_hub_data',
+    'group_hub_metadata',
+    'group_legacy_info',
+    'group_metadata',
+    'group_promotional_fields',
+  ),
   'publication_club' => array(
     'group_publication_club',
   ),
   'publication_magazine' => array(
     'group_publication_magazine',
+  ),
+  'classroom_product' => array(
+    'group_classroom_product',
   ),
 );
 

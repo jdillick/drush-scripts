@@ -18,17 +18,21 @@ drush @classroom scr delete-content-type.php toolbox_content
 # Remove Unused Fields
 drush @classroom scr classroom/delete-unused-fields.php
 
+# Fix Doppeled Field Collection
+# field_class_contributor to become field_hub_contributor
+drush @classroom scr correct-renamed-doppel-field-collections.php classroom_product
+
 # Copy Id Fields to Doppel Types
-drush @classroom scr copy-identity-field-instances-to-doppels.php parent_teacher_guide,toolbox_media_content,publication_club,publication_magazine
+drush @classroom scr copy-identity-field-instances-to-doppels.php parent_teacher_guide,toolbox_media_content,publication_club,publication_magazine,classroom_product
 
 # Save all Doppel Types (causes doppel flattening)
-drush @classroom scr save-all-nodes-in-types.php parent_teacher_guide,toolbox_media_content,publication_club,publication_magazine
+drush @classroom scr save-all-nodes-in-types.php parent_teacher_guide,toolbox_media_content,publication_club,publication_magazine,classroom_product
 
 # Fix missing file usage
-drush @classroom scr add-file-usage.php parent_teacher_guide,toolbox_media_content,publication_club,publication_magazine
+drush @classroom scr add-file-usage.php parent_teacher_guide,toolbox_media_content,publication_club,publication_magazine,classroom_product
 
 # Detach Doppel Profiles
-drush @classroom scr detach-doppels.php parent_teacher_guide,toolbox_media_content,publication_club,publication_magazine
+drush @classroom scr detach-doppels.php parent_teacher_guide,toolbox_media_content,publication_club,publication_magazine,classroom_product
 
 drush @classroom cc all; memflush --server=127.0.0.1; drush cc drush
 
@@ -37,16 +41,17 @@ drush @classroom scr delete-content-type.php textual_content
 drush @classroom scr delete-content-type.php media_asset
 drush @classroom scr delete-content-type.php club
 drush @classroom scr delete-content-type.php hub_magazine
+drush @classroom scr delete-content-type.php product
 
 # Create FC Replacement
-drush @classroom scr field-collections-to-content-types.php parent_teacher_guide,toolbox_media_content,publication_club,publication_magazine
+drush @classroom scr field-collections-to-content-types.php parent_teacher_guide,toolbox_media_content,publication_club,publication_magazine,classroom_product
 drush @classroom cc all; memflush --server=127.0.0.1; drush cc drush
 
 # Copy FC Entities to Nodes
-drush @classroom scr field-collection-entities-to-nodes.php parent_teacher_guide,toolbox_media_content,publication_club,publication_magazine
+drush @classroom scr field-collection-entities-to-nodes.php parent_teacher_guide,toolbox_media_content,publication_club,publication_magazine,classroom_product
 
 # Delete FC Entities and field instances
-drush @classroom scr delete-field-collections.php parent_teacher_guide,toolbox_media_content,publication_club,publication_magazine
+drush @classroom scr delete-field-collections.php parent_teacher_guide,toolbox_media_content,publication_club,publication_magazine,classroom_product
 
 drush @classroom cc all; memflush --server=127.0.0.1; drush cc drush
 
