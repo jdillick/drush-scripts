@@ -88,7 +88,7 @@ foreach ( $data as $i => $row ) {
 		if ( ! $value ||  $headermeta[$j] == 'nutrition-label' ) continue;
 
 		if ( $headermeta[$j] == 'nutrition-value' ) {
-			$recipe->nutrition[$field_mappings[$row[$j - 1]]] = $value;
+			$recipe->$field_mappings[$row[$j - 1]] = $value;
 			$nutritions[] = $row[$j - 1];
 		} 
 		elseif ( $headermeta[$j] == 'tag' ) {
@@ -108,6 +108,10 @@ foreach ( $data as $i => $row ) {
 }
 
 display_text_progress_bar(count($recipes), TRUE);
+
+// store created terms to prevent duplicates
+$created_terms = array();
+
 foreach ( $recipes as $i => $recipe ) {
 	$title = check_plain(trim($recipe->title_field));
 	if (!$title) continue;
@@ -143,8 +147,16 @@ foreach ( $recipes as $i => $recipe ) {
 			$vocab = taxonomy_vocabulary_machine_name_load('tags');
 			$terms = array();
 			foreach ( $recipe->$field as $tag ) {
-				$term = (object) array('name' => check_plain($tag), 'vid' => $vocab->vid);
-				taxonomy_term_save($term);
+				if ( ! check_plain(trim($tag)) ) continue;
+
+				if ( ! isset($created_terms[check_plain(trim($tag))]) ) {				
+					$term = (object) array('name' => check_plain(trim($tag)), 'vid' => $vocab->vid);
+					taxonomy_term_save($term);
+					$created_terms[check_plain(trim($tag))] = $term;
+				}
+				else {
+					$term = $created_terms[check_plain(trim($tag))];
+				}
 				$terms[] = array('tid' => $term->tid);
 			}
 			if ( empty($terms) ) continue;
